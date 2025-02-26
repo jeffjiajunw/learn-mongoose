@@ -24,6 +24,7 @@ export interface IBookInstance extends Document {
 export interface IBookInstanceModel extends Model<IBookInstance> {
   getAllBookStatuses(): Promise<string[]>;
   getBookInstanceCount(filter?: FilterQuery<IBookInstance>): Promise<number>;
+  getBookDtl(id: string): Promise<IBookInstance[]>;
 }
 
 var BookInstanceSchema: Schema<IBookInstance> = new Schema(
@@ -50,6 +51,10 @@ BookInstanceSchema.statics.getAllBookStatuses = async function (): Promise<strin
     return `${bookInstance.book.title} : ${bookInstance.status}`;
   });
   return results;
+}
+
+BookInstanceSchema.statics.getBookDtl = async function(id: string): Promise<IBookInstance[]> {
+  return BookInstance.find({ book: id }).select('imprint status').exec();
 }
 
 /**

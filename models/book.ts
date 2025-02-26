@@ -36,6 +36,7 @@ export interface IBook extends Document {
 interface IBookModel extends Model<IBook> {
   getAllBooksWithAuthors(projectionOpts: string, sortOpts?: { [key: string]: 1 | -1 }): Promise<IBook[]>;
   getBookCount(fitler?: FilterQuery<IBook>): Promise<number>;
+  getBook(id: string): Promise<IBook | null>;
 }
 
 /**
@@ -81,6 +82,13 @@ BookSchema.statics.getAllBooksWithAuthors = async function (projection: string, 
  */
 BookSchema.statics.getBookCount = async function (filter?: FilterQuery<IBook>): Promise<number> {
   return this.countDocuments(filter || {});
+}
+
+BookSchema.statics.getBook = async function(id: string): Promise<IBook | null> {
+  if (typeof id !== 'string') {
+    return null;
+  }
+  return Book.findOne({ _id: id }).populate('author').exec();
 }
 
 /**
